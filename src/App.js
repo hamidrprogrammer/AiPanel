@@ -15,7 +15,7 @@ const msalConfig = {
         authority:"https://login.microsoftonline.com/d9f018ac-3fe4-43ee-b3ff-fdafdec35d3f",
         postLogoutRedirectUri: "/",
         navigateToLoginRequestUrl: false,
-    redirectUri: 'http://95.216.205.162:3000', // Your redirect URI
+    redirectUri: 'https://95.216.205.162:8443', // Your redirect URI
   },
 };
 
