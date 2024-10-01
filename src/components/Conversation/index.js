@@ -36,7 +36,7 @@ const requestOptions = {
   redirect: "follow"
 };
 
-      const response = await fetch('95.216.205.162:8000/api/prompt', requestOptions);
+      const response = await fetch('http://127.0.0.1:8000/api/prompt', requestOptions);
 
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
@@ -51,6 +51,8 @@ const requestOptions = {
         outgoing: false,
         subtype: "doc",
         file: data?.response?.file?.base64_data,
+        title: data?.response?.file?.file_name,
+        content_type: data?.response?.file?.content_type,
       }])
 
 

@@ -1,6 +1,8 @@
 import { Box, Stack } from '@mui/material'
 import React from 'react';
 import { Chat_History } from '../../data'
+import Base64Downloader from 'react-base64-downloader';
+
 import { Base64PDFViewer, DocMsg, LinkMsg, MediaMsg, ReplyMsg, TextMsg, TimeLine } from './MsgTypes';
 const Article = ({ content }) => {
   const formattedContent = content.split('### ').map((section, index) => {
@@ -36,11 +38,36 @@ const Article = ({ content }) => {
     </article>
   );
 };
+const base64ToBlob = (base64, type) => {
+  const byteCharacters = atob(base64);
+  const byteNumbers = new Uint8Array(byteCharacters.length);
+  for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+  }
+  return new Blob([byteNumbers], { type });
+};
+
+// Function to handle download
+const handleDownload = (base64PDF) => {
+  const blob = base64ToBlob(base64PDF, 'application/pdf');
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'document.pdf'; // Specify the download file name
+  a.click();
+  URL.revokeObjectURL(url); // Clean up the URL object
+};
 const Message = ({ menu, list }) => {
   return (
     <Box p={3}>
       <Stack spacing={3}>
         {list?.map((el) => {
+          let objectURL=null;
+          if(el?.file!=null){
+            const blob = base64ToBlob(el?.file, 'application/pdf');
+            objectURL = URL.createObjectURL(blob);
+          }
+          
           switch (el.type) {
             case 'divider':
               return <TimeLine el={el} />
@@ -51,11 +78,20 @@ const Message = ({ menu, list }) => {
                   case 'doc':
                     return (
                       <>
-                        <div
+                      <DocMsg el={el}/>
+                        {/* <div
                           dangerouslySetInnerHTML={{ __html: el.message }} // Render the HTML content safely
                         />
                      
-                        <embed src={`data:application/pdf;base64,${el.file}`} />
+                       {objectURL?    <iframe
+                title="PDF Viewer"
+                src={objectURL}
+                width="50%"
+                height="300px"
+            />:null} */}
+                 
+
+                    
                       </>
                     );
                  

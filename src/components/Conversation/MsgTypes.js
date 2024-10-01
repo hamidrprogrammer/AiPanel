@@ -4,9 +4,48 @@ import { DotsThreeVertical, DownloadSimple, Image } from 'phosphor-react';
 import React from 'react';
 import {Message_options} from '../../data'
 import { useState } from 'react';
+const base64ToBlob = (base64, type) => {
+  const byteCharacters = atob(base64);
+  const byteNumbers = new Uint8Array(byteCharacters.length);
+  for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+  }
+  return new Blob([byteNumbers], { type });
+};
 
+// Function to handle download
+const handleDownload = (base64PDF) => {
+  const blob = base64ToBlob(base64PDF, 'application/pdf');
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'document.pdf'; // Specify the download file name
+  a.click();
+  URL.revokeObjectURL(url); // Clean up the URL object
+};
 const DocMsg = ({el,menu}) => {
     const theme = useTheme();
+    // const formattedText = el.message.split('\n').map((line, index) => (
+    //   <React.Fragment key={index}>
+    //     {line}
+       
+    //   </React.Fragment>
+    // ));
+    const formatText = (text) => {
+      // Split text into lines
+      const lines = text.split('\n').filter(line => line.trim() !== '');
+  
+      return lines.map((line, index) => {
+        // Add logic to identify headings and lists if needed
+        if (line.startsWith('Project Name') || line.startsWith('Document Title') || line.startsWith('Version')) {
+          return <h3 key={index}>{line}</h3>; // Heading style for important information
+        } else if (line.startsWith('•')) {
+          return <li key={index}>{line.substring(1).trim()}</li>; // List item
+        } else {
+          return <p key={index}>{line}</p>; // Regular paragraph
+        }
+      });
+    };
   return (
     <Stack direction='row' justifyContent={el.incoming ? 'start' : 'end'}>
         <Box p={1.5} sx={{
@@ -18,14 +57,15 @@ const DocMsg = ({el,menu}) => {
             sx={{backgroundColor:theme.palette.background.paper, borderRadius:1}}>
                 <Image size={48}/>
                 <Typography variant='caption'>
-                    Abstract.png
+                   {el?.title}
                 </Typography>
-                <IconButton>
+                <IconButton onClick={()=>{handleDownload(el.file)}}>
                     <DownloadSimple/>
                 </IconButton>
             </Stack>
             <Typography variant='body2' sx={{color: el.incoming ? theme.palette.text : '#fff' }} >
-                {el.message}
+             
+            {formatText(el.message)}
             </Typography>
         </Stack>
         </Box>
