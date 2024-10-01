@@ -7,22 +7,14 @@ import Router from './routes';
 import myImage from './alfa-laval2206.jpg'; // Adjust the path to your image file
 import { useNavigate } from 'react-router-dom';
 
-const msalConfig = {
-    auth: {
-      clientId: "356fe2ef-4e6c-4719-bfa5-1b2996c41fcd",
-          authority:"https://login.microsoftonline.com/d9f018ac-3fe4-43ee-b3ff-fdafdec35d3f",
-          postLogoutRedirectUri: "/",
-          navigateToLoginRequestUrl: false,
-      redirectUri: 'http://localhost:3000', // Your redirect URI
-    },
-  };
+
 const AuthCheck = () => {
     const { accounts } = useMsal();
     const navigate = useNavigate();
     const { instance } = useMsal();
 
   const handleLogin = () => {
-    instance.loginRedirect()
+    instance.loginPopup()
       .catch(error => {
         console.error(error);
       });
