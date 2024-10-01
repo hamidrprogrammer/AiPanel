@@ -25,5 +25,9 @@ COPY --from=build /app/build /usr/share/nginx/html
 # Copy custom Nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
+# Copy SSL certificates
+COPY certs/your_certificate.crt /etc/ssl/certs/
+COPY certs/your_private_key.key /etc/ssl/private/
+
 # Expose port 3000
 EXPOSE 3000
