@@ -1,22 +1,22 @@
-# Use the official Node.js image as the base image
+# Use an official Node runtime as a parent image
 FROM node:16 AS build
 
-# Set the working directory
+# Set the working directory to /app
 WORKDIR /app
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
+# Copy the package.json and package-lock.json to the working directory
+COPY ./package*.json ./
 
-# Install dependencies
+# Install the dependencies
 RUN npm install
 
-# Copy the rest of the application code
+# Copy the remaining application files to the working directory
 COPY . .
 
-# Build the application for production
+# Build the application
 RUN npm run build
 
-# Use a lightweight web server to serve the build files
+# Use Nginx to serve the application
 FROM nginx:alpine
 
 # Copy the build files to the Nginx directory
@@ -25,5 +25,5 @@ COPY --from=build /app/build /usr/share/nginx/html
 # Copy custom Nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Expose port 80 for HTTP and 443 for HTTPS
-EXPOSE 3000 443
+# Expose port 3000
+EXPOSE 3000
